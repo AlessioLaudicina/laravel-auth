@@ -20,15 +20,25 @@
 </head>
 
 <body>
-    <div id="app">
+<div id="app">
 
 
-     @include('partials.header')
+@include('partials.header')
 
-        <main class="">
-            @yield('content')
-        </main>
+<main class="">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-2">
+                @include('partials.sidebar')
+            </div>
+
+            <div class="col-10">
+                @yield('content')
+            </div>
+        </div>
     </div>
+</main>
+</div>
 </body>
 
 </html>
