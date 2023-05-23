@@ -15,6 +15,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
+        return view('admin.posts.index', compact('posts'));
     }
 
     /**
@@ -24,7 +25,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.posts.create');
     }
 
     /**
@@ -33,9 +34,23 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        //
+        $validated_data = $request->validated();
+
+        $validated_data['slug'] = Post::generateSlug($request->title);
+
+
+        $checkPost = Post::where('slug', $validated_data['slug'])->first();
+        if ($checkPost) {
+            return back()->withInput()->withErrors(['slug' => 'Impossibile creare lo slug per questo post, cambia il titolo']);
+        }
+        
+
+        $newPost = Post::create($validated_data);
+
+        return redirect()->route('admin.posts.show', ['post' => $newPost->slug])->with('status', 'Post creato con successo!');
+
     }
 
     /**
@@ -46,7 +61,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return view('admin.post.show');
+        return view('admin.posts.show', compact('post'));
     }
 
     /**
@@ -57,7 +72,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('admin.posts.edit', compact('post'));
     }
 
     /**
@@ -69,7 +84,19 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        
+        $validated_data = $request->validated();
+        $validated_data['slug'] = Post::generateSlug($request->title);
+
+        $checkPost = Post::where('slug', $validated_data['slug'])->where('id', '<>', $post->id)->first();
+
+        if ($checkPost) {
+            return back()->withInput()->withErrors(['slug' => 'Impossibile creare lo slug']);
+        }
+
+        $post->update($validated_data);
+        return redirect()->route('admin.posts.show', ['post' => $post->slug])->with('status', 'Post modificato con successo!');
+
     }
 
     /**
@@ -80,6 +107,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return redirect()->route('admin.posts.index');
     }
 }
