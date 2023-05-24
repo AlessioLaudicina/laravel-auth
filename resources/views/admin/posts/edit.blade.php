@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-
+@section('page-title', "Modifica: $post->title")
 
 @section('content')
 
@@ -28,3 +28,20 @@
                 </div>
             @enderror
         </div>
+
+        
+        <div class="mb-3">
+            <label for="content" class="form-label">Testo dell'articolo</label>
+            <textarea class="form-control @error('content') is-invalid @enderror" id="content" name="content">{{old('content', $post->content)}}</textarea>
+            @error('content')
+                <div class="invalid-feedback">
+                    {{$message}}
+                </div>
+            @enderror
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salva</button>
+
+    </form>
+
+@endsection

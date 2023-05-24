@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest; 
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -38,7 +40,7 @@ class PostController extends Controller
     {
         $validated_data = $request->validated();
 
-        $validated_data['slug'] = Post::generateSlug($request->title);
+        $validated_data['slug'] = Post::generateSlug($validated_data['title']);
 
 
         $checkPost = Post::where('slug', $validated_data['slug'])->first();
